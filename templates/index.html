@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Human Classifier</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="Human Classifier home">
+          <span class="brand-mark">HC</span>
+          <span>Human Classifier</span>
+        </a>
+        <span class="model-status"><i></i> Model ready</span>
+      </header>
+
+      <section class="intro">
+        <p class="eyebrow">Image intelligence / 01</p>
+        <h1>What does the<br /><em>model</em> see?</h1>
+        <p class="lede">
+          Upload a portrait and let the trained CNN return its prediction in
+          seconds.
+        </p>
+      </section>
+
+      <section class="workspace">
+        <form class="upload-panel" method="post" enctype="multipart/form-data">
+          <div class="panel-heading">
+            <span class="step">01</span>
+            <div>
+              <h2>Drop an image</h2>
+              <p>One portrait at a time</p>
+            </div>
+          </div>
+          <label class="dropzone" for="image-input">
+            <span class="upload-icon">↑</span>
+            <strong>Choose a portrait</strong>
+            <span>PNG, JPG, JPEG or WEBP · up to 10 MB</span>
+            <input
+              id="image-input"
+              name="image"
+              type="file"
+              accept="image/png,image/jpeg,image/webp"
+              required
+            />
+          </label>
+          <p id="file-name" class="file-name">No image selected</p>
+          <button class="predict-button" type="submit">
+            Run prediction <span>↗</span>
+          </button>
+        </form>
+
+        <aside class="result-panel {% if result %}has-result{% endif %}">
+          <div class="panel-heading">
+            <span class="step">02</span>
+            <div>
+              <h2>Prediction</h2>
+              <p>Model output</p>
+            </div>
+          </div>
+          {% if result %}
+          <div class="result-content">
+            <p class="result-kicker">The image is classified as</p>
+            <p class="result-label">{{ result.display_label }}</p>
+            <div class="confidence-row">
+              <span>Confidence</span><strong>{{ result.confidence }}%</strong>
+            </div>
+            <div class="meter">
+              <span style="width: {{ result.confidence }}%"></span>
+            </div>
+            <p class="result-file">{{ result.filename }}</p>
+          </div>
+          {% elif error %}
+          <div class="empty-state error-state">
+            <span>!</span>
+            <p>{{ error }}</p>
+          </div>
+          {% else %}
+          <div class="empty-state">
+            <span>✦</span>
+            <p>Your result will appear here<br />after the analysis.</p>
+          </div>
+          {% endif %}
+        </aside>
+      </section>
+
+      <footer>
+        <span>Powered by your trained gender CNN</span
+        ><span>128 × 128 input</span>
+      </footer>
+    </main>
+    <script>
+      const input = document.getElementById("image-input");
+      const fileName = document.getElementById("file-name");
+      input.addEventListener("change", () => {
+        fileName.textContent = input.files.length
+          ? input.files[0].name
+          : "No image selected";
+      });
+    </script>
+  </body>
+</html>
